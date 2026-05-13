@@ -8,7 +8,7 @@
   <img src="https://img.shields.io/badge/language-C%2FRust-orange.svg?style=for-the-badge" alt="Language: C/Rust">
   <img src="https://img.shields.io/badge/role-workspace%20integrator-purple.svg?style=for-the-badge" alt="Role: workspace integrator">
   <img src="https://img.shields.io/badge/output-cact.iso-green.svg?style=for-the-badge" alt="Output: cact.iso via CactBridge">
-  <img src="https://img.shields.io/badge/status-pre--1.0-yellow.svg?style=for-the-badge" alt="Status: pre-1.0">
+  <img src="https://img.shields.io/badge/status--1.0.0-yellow.svg?style=for-the-badge" alt="Status: 1.0.0">
 </p>
 
 <p align="center">
@@ -27,9 +27,9 @@
   &nbsp;·&nbsp;
   <a href="https://github.com/QwaYer/CactUserBins-x86_32"><strong>CactUserBins</strong></a>
   &nbsp;·&nbsp;
-  <strong>LocalRepo</strong>
+  <a href="https://github.com/QwaYer/LocalRepoCactOS"><strong>LocalRepo</strong></a>
   &nbsp;·&nbsp;
-  <strong>CactBridge</strong>
+  <a href="https://github.com/QwaYer/CactBridge"><strong>CactBridge</strong></a>
 </p>
 
 ---
