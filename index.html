@@ -417,7 +417,7 @@
         <div class="nav-container">
             <a href="#" class="logo">🌵 CACTOS</a>
             <ul class="nav-links">
-                <li><a href="#features">Features</a></li>
+                <li><a href="#specs">Specs</a></li>
                 <li><a href="#components">Components</a></li>
                 <li><a href="#build">Build</a></li>
                 <li><a href="https://github.com/QwaYer/CactOS-x86_32" target="_blank">GitHub</a></li>
@@ -430,8 +430,8 @@
         <div class="hero-content">
             <div class="cactus-emoji">🌵</div>
             <h1>CactOS/x86_32</h1>
-            <p class="subtitle">Complete Operating System Distribution</p>
-            <p style="color: #cbd5e0; margin-bottom: 2rem;">Official distribution based on CactKernel. Monolithic OS with microkernel-style components. C/Rust hybrid. i686 architecture.</p>
+            <p class="subtitle">Monolithic OS with Microkernel-Style Pieces</p>
+            <p style="color: #cbd5e0; margin-bottom: 2rem;">Low level in C. Critical subsystems in Rust. Complete 32-bit x86 operating system with kernel, libc, shell, and userland utilities.</p>
             
             <div class="cta-buttons">
                 <a href="https://github.com/QwaYer/CactOS-x86_32" class="btn btn-secondary">📖 GitHub Repository</a>
@@ -444,7 +444,7 @@
     <section class="stats">
         <div class="stats-container">
             <div class="stat-card">
-                <div class="stat-number">73+</div>
+                <div class="stat-number">73</div>
                 <div class="stat-label">System Calls</div>
             </div>
             <div class="stat-card">
@@ -452,85 +452,85 @@
                 <div class="stat-label">MLFQ Levels</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">9</div>
+                <div class="stat-number">9+</div>
                 <div class="stat-label">Filesystems</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">v1.0.0</div>
-                <div class="stat-label">Pre-release</div>
+                <div class="stat-label">Status</div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features" id="features">
-        <h2 class="section-title">🚀 Core Features</h2>
+    <!-- Specs Section -->
+    <section class="features" id="specs">
+        <h2 class="section-title">🔍 Technical Specifications</h2>
         <div class="features-grid">
             <div class="feature-card">
                 <div class="feature-icon">🧠</div>
-                <h3>Memory Management</h3>
-                <p>PMM, VMM, heap, slab allocator, mmap, COW, swap, page faults, OOM handling, shared memory.</p>
+                <h3>Memory Manager</h3>
+                <p>PMM, VMM, heap, slab, mmap, COW, swap, page faults, OOM handling, shared memory (Rust: rust_mm)</p>
             </div>
 
             <div class="feature-card">
                 <div class="feature-icon">⏱️</div>
-                <h3>MLFQ Scheduler</h3>
-                <p>4-level multilevel feedback queue with priority boost, anti-starvation, and sleep queue.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">💾</div>
-                <h3>Multiple Filesystems</h3>
-                <p>ext4, VFS, devfs, procfs, mntfs, etcfs, tmpfs, binfs, sbinfs, libfs, and varfs.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🌐</div>
-                <h3>Complete Network Stack</h3>
-                <p>Ethernet, ARP, IPv4, ICMP, TCP/UDP sockets, smoltcp, virtio-net, DNS, DHCP.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">🔌</div>
-                <h3>Driver Support</h3>
-                <p>PCI, AHCI, NVMe, xHCI, USB, PS/2, virtio-net, framebuffer console with MTRR.</p>
+                <h3>Scheduler</h3>
+                <p>4-level MLFQ (Rust: sched) with priority boost, anti-starvation, sleep queue, and timer wheel.</p>
             </div>
 
             <div class="feature-card">
                 <div class="feature-icon">🔒</div>
                 <h3>Synchronization</h3>
-                <p>Spinlock, IRQ spinlock, mutex, semaphore for multi-process coordination.</p>
+                <p>Spinlock, IRQ spinlock, mutex, semaphore (Rust implementation) for multi-process coordination.</p>
             </div>
 
             <div class="feature-card">
                 <div class="feature-icon">🧬</div>
-                <h3>Process Management</h3>
-                <p>fork, exec, exit, waitpid. 13 signals, sigaction, full process lifecycle support.</p>
+                <h3>Processes & Signals</h3>
+                <p>TaskStruct, fork/exec/exit/waitpid, 13 signals, sigaction, sigreturn, sigprocmask, sigsuspend.</p>
             </div>
 
             <div class="feature-card">
                 <div class="feature-icon">📦</div>
                 <h3>ELF & Dynamic Linking</h3>
-                <p>Complete ELF loader, dynamic linking, i386 relocations including R_386_COPY.</p>
+                <p>ELF loader, dynamic linker, i386 relocations including R_386_COPY for complete binary support.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📁</div>
+                <h3>VFS & Filesystems</h3>
+                <p>VFS core, ext4 read/write, devfs, procfs, mntfs, etcfs, tmpfs, binfs, sbinfs, libfs, varfs.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💾</div>
+                <h3>Block I/O & Drivers</h3>
+                <p>PCI enumeration, AHCI, NVMe, block cache, xHCI, USB, PS/2, virtio-net, framebuffer console.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌐</div>
+                <h3>Network Stack</h3>
+                <p>Ethernet, ARP, IPv4, ICMP, TCP/UDP sockets, smoltcp (Rust), virtio-net, DNS, DHCP, knetd.</p>
             </div>
 
             <div class="feature-card">
                 <div class="feature-icon">🎯</div>
-                <h3>Multiboot2 Boot</h3>
-                <p>Full Multiboot2 support with framebuffer, memory map, modules, and PCI config.</p>
+                <h3>Boot & System</h3>
+                <p>Multiboot2 parser, GDT/TSS, IDT (32 CPU exceptions + PIC IRQs), framebuffer, version tracking.</p>
             </div>
         </div>
     </section>
 
     <!-- Components Section -->
     <section class="features" id="components" style="margin-bottom: 4rem;">
-        <h2 class="section-title">🔗 Integrated Components</h2>
+        <h2 class="section-title">🔗 Integrated Ecosystem</h2>
         <div class="features-grid">
             <a href="https://github.com/QwaYer/CactKernel-x86_32" style="text-decoration: none;">
                 <div class="feature-card">
                     <div class="feature-icon">🔥</div>
                     <h3>CactKernel</h3>
-                    <p>Core 32-bit x86 hybrid monolithic kernel with memory, scheduler, drivers.</p>
+                    <p>Core hybrid monolithic kernel with memory manager, MLFQ scheduler, and drivers.</p>
                 </div>
             </a>
 
@@ -538,7 +538,7 @@
                 <div class="feature-card">
                     <div class="feature-icon">📚</div>
                     <h3>CactLib</h3>
-                    <p>Userspace C library (libc.a / libc.so) with full syscall interface.</p>
+                    <p>Userspace C library (libc.a / libc.so) with full syscall interface support.</p>
                 </div>
             </a>
 
@@ -546,7 +546,7 @@
                 <div class="feature-card">
                     <div class="feature-icon">🐚</div>
                     <h3>Cactsole</h3>
-                    <p>Interactive shell for user command execution and system interaction.</p>
+                    <p>Interactive shell for command execution and userspace interaction.</p>
                 </div>
             </a>
 
@@ -562,7 +562,7 @@
                 <div class="feature-card">
                     <div class="feature-icon">🛠️</div>
                     <h3>CactUserBins</h3>
-                    <p>Collection of userland utilities and system tools.</p>
+                    <p>Collection of userland utilities and system tools packaged as relocatable modules.</p>
                 </div>
             </a>
 
@@ -570,14 +570,14 @@
                 <div class="feature-card">
                     <div class="feature-icon">📦</div>
                     <h3>LocalRepo</h3>
-                    <p>Module repository and cctkfs.img packer for relocatable .cctk modules.</p>
+                    <p>Module repository and cctkfs.img packer for .cctk relocatable modules.</p>
                 </div>
             </a>
         </div>
     </section>
 
     <!-- Tech Stack Section -->
-    <section class="tech-stack" id="tech">
+    <section class="tech-stack">
         <h2 class="section-title">🔧 Technology Stack</h2>
         <div class="tech-grid">
             <div class="tech-item">
@@ -586,7 +586,7 @@
             </div>
             <div class="tech-item">
                 <span>Rust</span>
-                <p style="color: #a0aec0; font-size: 0.85rem;">MM/Sched</p>
+                <p style="color: #a0aec0; font-size: 0.85rem;">MM/Sched/Net</p>
             </div>
             <div class="tech-item">
                 <span>Assembly</span>
@@ -598,7 +598,7 @@
             </div>
             <div class="tech-item">
                 <span>NASM</span>
-                <p style="color: #a0aec0; font-size: 0.85rem;">Asm</p>
+                <p style="color: #a0aec0; font-size: 0.85rem;">Boot/ISRs</p>
             </div>
             <div class="tech-item">
                 <span>GCC -m32</span>
@@ -611,96 +611,128 @@
     <section class="code-section" id="build">
         <h2 class="section-title">🏗️ Building CactOS</h2>
         
-        <h3 style="color: #86efac; margin-top: 2rem; font-family: 'Space Mono', monospace;">Quick Start (one command):</h3>
+        <h3 style="color: #86efac; margin-top: 2rem; font-family: 'Space Mono', monospace;">Quick Start - Full ISO + Disk:</h3>
         <div class="code-block">
             <code>
-./build-cact-qemu.sh           # full ISO + disk<br>
+./build-cact-qemu.sh           # full ISO + disk, 1 command<br>
+./build-cact-qemu.sh && CACT_ISO=CactBridge/build/cact.iso CactKernel-x86_32/run_qemu.sh<br>
 RUN_QEMU=1 ./build-cact-qemu.sh  # build + run in QEMU
             </code>
         </div>
 
-        <h3 style="color: #86efac; margin-top: 2rem; font-family: 'Space Mono', monospace;">Step by step:</h3>
+        <h3 style="color: #86efac; margin-top: 2rem; font-family: 'Space Mono', monospace;">Or Step by Step from Workspace:</h3>
         <div class="code-block">
             <code>
-make -j$(nproc)               # full ISO (libc → shell → utils → kernel)<br>
-make -j$(nproc) disk          # ISO + empty ext4 nvme.img<br>
+make -j$(nproc)               # full ISO (default)<br>
+make -j$(nproc) disk          # ISO + empty nvme.img<br>
 make -j$(nproc) kernel        # kernel only<br>
 make -j$(nproc) libc          # libc only<br>
-make -j$(nproc) cactsole      # shell only
+make -j$(nproc) cactsole      # shell only<br>
+make -j$(nproc) drivers       # all out-of-tree drivers
             </code>
         </div>
 
-        <h3 style="color: #86efac; margin-top: 2rem; font-family: 'Space Mono', monospace;">Fine-grained targets:</h3>
+        <h3 style="color: #86efac; margin-top: 2rem; font-family: 'Space Mono', monospace;">Build Individual Components:</h3>
         <div class="code-block">
             <code>
-make -C CactLib-x86_32               # libc only<br>
-make -C Cactsole-x86_32              # shell only<br>
+make -C CactLib-x86_32               # libc (no deps)<br>
+make -C Cactsole-x86_32              # shell (auto-finds CactLib)<br>
+make -C Cgoct-x86_32                 # init (auto-finds CactLib)<br>
 make -C CactUserBins-x86_32 install  # userland utils<br>
+make -C CactKernel-x86_32            # kernel only ISO<br>
 make -C CactKernel-x86_32 iso-full   # kernel + userland<br>
 make -C LocalRepoCactOS              # pack cctkfs.img<br>
-make -C CactBridge iso               # final ISO
+make -C CactBridge iso               # final ISO from kernel + cctkfs
             </code>
         </div>
 
         <h3 style="color: #86efac; margin-top: 2rem; font-family: 'Space Mono', monospace;">Requirements:</h3>
         <div class="code-block">
             <code>
-• gcc -m32 (multilib) for 32-bit compilation<br>
-• nasm for NASM assembly<br>
-• cargo +nightly for Rust subsystems<br>
-• grub-mkrescue + xorriso for ISO creation<br>
-• qemu-img, mkfs.ext4 for disk images<br>
-• make for build automation
+• gcc -m32 (multilib on amd64 — e.g. gcc-multilib)<br>
+• nasm — Multiboot2 entry + interrupt stubs<br>
+• ld -m elf_i386 — GNU binutils<br>
+• cargo +nightly — Rust subsystems (MM, scheduler, net)<br>
+• grub-mkrescue + xorriso — ISO creation<br>
+• qemu-img, mkfs.ext4, e2fsck — Disk image management<br>
+• make — Build automation
             </code>
         </div>
 
-        <h3 style="color: #86efac; margin-top: 2rem; font-family: 'Space Mono', monospace;">Build with options:</h3>
+        <h3 style="color: #86efac; margin-top: 2rem; font-family: 'Space Mono', monospace;">Build Options:</h3>
         <div class="code-block">
             <code>
 SKIP_DRIVERS=1 make           # skip out-of-tree drivers<br>
-DRIVERS="AHCI NVMe" make      # build specific drivers<br>
-JOBS=8 make                   # parallel build with 8 jobs
+DRIVERS="AHCI NVMe Virtio-net" make  # build specific drivers only<br>
+JOBS=N make                   # parallel build with N jobs
             </code>
         </div>
     </section>
 
-    <!-- Architecture Section -->
+    <!-- Build Targets Table -->
     <section class="features" style="margin-bottom: 4rem;">
-        <h2 class="section-title">🗺️ System Architecture</h2>
+        <h2 class="section-title">📋 Build Targets</h2>
         <div style="max-width: 900px; margin: 0 auto;">
-            <p style="color: #cbd5e0; margin-bottom: 1.5rem; text-align: center;">Workspace structure integrating all components:</p>
             <div class="code-block">
                 <code>
-CactOS-x86_32/<br>
-├── CactKernel-x86_32/      # Core kernel<br>
-├── CactLib-x86_32/          # C library<br>
-├── Cactsole-x86_32/         # Shell<br>
-├── Cgoct-x86_32/            # Init process<br>
-├── CactUserBins-x86_32/     # User utilities<br>
-├── LocalRepoCactOS/         # Module repository<br>
-├── CactBridge/              # ISO builder<br>
-├── build-cact-qemu.sh       # Full build script<br>
-└── Makefile                 # Workspace build
+<strong style="color: #86efac;">make / make all / make iso</strong><br>
+libc → cactsole/cgoct → CactUserBins install → *.cctk → cctkfs.img → kernel → CactBridge/build/cact.iso<br><br>
+<strong style="color: #86efac;">make disk</strong><br>
+iso + empty ext4 CactKernel-x86_32/build/nvme.img<br><br>
+<strong style="color: #86efac;">make kernel</strong><br>
+Kernel only<br><br>
+<strong style="color: #86efac;">make drivers</strong><br>
+Out-of-tree *.cctk modules only (AHCI, NVMe, Virtio-net, Yukon, etc.)<br><br>
+<strong style="color: #86efac;">make libc, make localrepo, etc.</strong><br>
+Fine-grained component builds (see Makefile for all targets)
                 </code>
             </div>
         </div>
     </section>
 
-    <!-- Syscalls Info -->
+    <!-- Syscalls Section -->
     <section class="features" style="margin-bottom: 4rem;">
-        <h2 class="section-title">📞 System Calls (73)</h2>
+        <h2 class="section-title">📞 System Calls (73 Total)</h2>
         <div style="max-width: 900px; margin: 0 auto;">
             <div class="code-block">
                 <code>
-<strong style="color: #86efac;">File I/O:</strong> open, read, write, close, create, delete, lseek, stat, fstat,<br>
-         getdents, rename, mkdir, rmdir, fcntl, ioctl, symlink, readlink, link, unlink<br><br>
+<strong style="color: #86efac;">Files:</strong> open, read, write, close, create, delete, lseek, stat, fstat,<br>
+getdents, rename, mkdir, rmdir, fcntl, ioctl, symlink, readlink, link, unlink<br><br>
 <strong style="color: #86efac;">Processes:</strong> fork, exec, exit, kill, signal, sigaction, sigreturn,<br>
-           sigprocmask, sigpending, sigsuspend, getpid, getppid, waitpid, sleep, brk, alarm<br><br>
+sigprocmask, sigpending, sigsuspend, getpid, getppid, waitpid, sleep, brk, alarm, setitimer<br><br>
 <strong style="color: #86efac;">Memory:</strong> mmap, munmap, mprotect, shmget, shmat, shmdt, shmctl<br><br>
 <strong style="color: #86efac;">Network:</strong> socket, bind, connect, listen, accept, send, recv,<br>
-         sendto, recvfrom, shutdown, setsockopt, getsockopt, select, poll<br><br>
-<strong style="color: #86efac;">Other:</strong> pipe, dup2, getcwd, chdir, getuid, getgid, setuid, setgid,<br>
-       geteuid, getegid, chmod, chown, gettimeofday, clock_gettime, nanosleep
+sendto, recvfrom, shutdown, setsockopt, getsockopt, select, poll<br><br>
+<strong style="color: #86efac;">I/O & Paths:</strong> pipe, dup2, getcwd, chdir, chroot, mount, umount<br><br>
+<strong style="color: #86efac;">Users & Time:</strong> getuid, getgid, setuid, setgid, geteuid, getegid, chmod, chown,<br>
+gettimeofday, clock_gettime, nanosleep<br><br>
+<strong style="color: #86efac;">Misc:</strong> print, uname, reboot
+                </code>
+            </div>
+        </div>
+    </section>
+
+    <!-- Architecture Section -->
+    <section class="features" style="margin-bottom: 4rem;">
+        <h2 class="section-title">🗺️ Workspace Structure</h2>
+        <div style="max-width: 900px; margin: 0 auto;">
+            <div class="code-block">
+                <code>
+CactOS-x86_32/                    # Root workspace integrator<br>
+├── CactKernel-x86_32/            # Core kernel (sibling repo)<br>
+├── CactLib-x86_32/               # C library (sibling repo)<br>
+├── Cactsole-x86_32/              # Shell (sibling repo)<br>
+├── Cgoct-x86_32/                 # Init process (sibling repo)<br>
+├── CactUserBins-x86_32/          # Userland utilities (sibling repo)<br>
+├── LocalRepoCactOS/              # Module repository & packer (sibling repo)<br>
+├── CactBridge/                   # ISO builder (sibling repo)<br>
+├── AHCI-for-Cact/                # Out-of-tree drivers (sibling repos)<br>
+├── NVMe-for-Cact/<br>
+├── Virtio-net-for-Cact/<br>
+├── Yukon-for-Cact/               # Marvell Yukon NIC<br>
+├── build-cact-qemu.sh            # Full build script<br>
+├── Makefile                      # Workspace integrator Makefile<br>
+└── README.md
                 </code>
             </div>
         </div>
@@ -719,27 +751,27 @@ CactOS-x86_32/<br>
             <div class="footer-section">
                 <h4>📚 Documentation</h4>
                 <a href="https://github.com/QwaYer/CactOS-x86_32/blob/main/README.md">README</a>
-                <a href="https://github.com/QwaYer/CactKernel-x86_32">CactKernel Docs</a>
+                <a href="https://github.com/QwaYer/CactKernel-x86_32/blob/main/README.md">CactKernel Docs</a>
                 <a href="https://github.com/QwaYer/CactLib-x86_32">CactLib Docs</a>
             </div>
 
             <div class="footer-section">
-                <h4>🔗 Ecosystem</h4>
+                <h4>🔗 Core Components</h4>
                 <a href="https://github.com/QwaYer/CactKernel-x86_32">CactKernel</a>
                 <a href="https://github.com/QwaYer/CactLib-x86_32">CactLib</a>
-                <a href="https://github.com/QwaYer/Cactsole-x86_32">Cactsole</a>
+                <a href="https://github.com/QwaYer/Cactsole-x86_32">Cactsole Shell</a>
             </div>
 
             <div class="footer-section">
                 <h4>⚖️ License & Developer</h4>
                 <a href="https://github.com/QwaYer/CactOS-x86_32/blob/main/LICENSE">GNU GPLv3</a>
                 <a href="https://github.com/QwaYer">Developer: QwaYer</a>
-                <p style="color: #718096; font-size: 0.85rem; margin-top: 1rem;">Free and open source OS.</p>
+                <p style="color: #718096; font-size: 0.85rem; margin-top: 1rem;">Free and open source OS distribution.</p>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>🌵 CactOS/x86_32 v1.0.0 — Official distribution based on CactKernel</p>
+            <p>🌵 CactOS/x86_32 v1.0.0 — Monolithic OS with microkernel-style pieces for 32-bit x86</p>
             <p style="margin-top: 0.5rem; font-size: 0.85rem;">© 2026 QwaYer. Licensed under GNU GPLv3</p>
         </div>
     </footer>
