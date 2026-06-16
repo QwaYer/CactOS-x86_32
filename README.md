@@ -6,7 +6,7 @@
   <img src="https://img.shields.io/badge/language-C%2FRust%2FASM-orange.svg?style=for-the-badge" alt="Language: C/Rust/ASM">
   <img src="https://img.shields.io/badge/role-workspace%20integrator-purple.svg?style=for-the-badge" alt="Role: workspace integrator">
   <img src="https://img.shields.io/badge/output-cact.iso-0369a1.svg?style=for-the-badge" alt="Output: cact.iso via CactBridge">
-  <img src="https://img.shields.io/badge/status-pre--1.0-yellow.svg?style=for-the-badge" alt="Status: pre-1.0">
+  <img src="https://img.shields.io/badge/status-2.0.0-yellow.svg?style=for-the-badge" alt="Status: 2.0.0">
 </p>
 
 <p align="center">
@@ -215,7 +215,7 @@ Out-of-tree PCI drivers are compiled as relocatable `.cctk` ELFs and loaded by t
 | Virtio-net | virtio NIC | 0x020000 (Virtio) | Yes |
 | Yukon | Marvell Yukon | 0x020000 | Yes |
 
-All out-of-tree drivers have been migrated from PIC-based IRQ to **MSI-X** for better performance and scalability.
+All out-of-tree drivers have been migrated from PIC-based IRQ to **MSI-X** for better performance and scalability. Kernel syscall dispatch uses **`sysenter`** (legacy `int 0x80` removed).
 
 ---
 
