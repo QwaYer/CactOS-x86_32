@@ -1,19 +1,17 @@
 # 🌵 CactOS/x86_32
 
 <p align="center">
-  <a href="https://github.com/CactKernelProject/CactOS/blob/main/LICENSE">
-    <img src="https://img.shields.io/badge/license-GPLv3-blue.svg?style=for-the-badge" alt="License: GPLv3">
-  </a>
+  <img src="https://img.shields.io/badge/license-GPLv3-blue.svg?style=for-the-badge" alt="License: GPLv3">
   <img src="https://img.shields.io/badge/arch-i686-red.svg?style=for-the-badge" alt="Arch: i686">
-  <img src="https://img.shields.io/badge/language-C%2FRust-orange.svg?style=for-the-badge" alt="Language: C/Rust">
+  <img src="https://img.shields.io/badge/language-C%2FRust%2FASM-orange.svg?style=for-the-badge" alt="Language: C/Rust/ASM">
   <img src="https://img.shields.io/badge/role-workspace%20integrator-purple.svg?style=for-the-badge" alt="Role: workspace integrator">
-  <img src="https://img.shields.io/badge/output-cact.iso-green.svg?style=for-the-badge" alt="Output: cact.iso via CactBridge">
-  <img src="https://img.shields.io/badge/status--1.0.0-yellow.svg?style=for-the-badge" alt="Status: 1.0.0">
+  <img src="https://img.shields.io/badge/output-cact.iso-0369a1.svg?style=for-the-badge" alt="Output: cact.iso via CactBridge">
+  <img src="https://img.shields.io/badge/status-pre--1.0-yellow.svg?style=for-the-badge" alt="Status: pre-1.0">
 </p>
 
 <p align="center">
-  <strong>English.</strong> Monolithic OS (with microkernel-style pieces) for <strong>i686</strong>: low level in <strong>C</strong>, critical subsystems in <strong>Rust</strong>.<br>
-  <strong>Русский.</strong> Монолитная ОС для <strong>i686</strong>: низкий уровень на <strong>C</strong>, память / планировщик / синхронизация на <strong>Rust</strong>.
+  <strong>Workspace integrator</strong> for <strong>CactOS</strong> — builds the full ISO from kernel, libc, drivers, shell, and userland.<br>
+  One <code>make</code> drives <strong>CactLib</strong>, <strong>Cactsole</strong>, <strong>Cgoct</strong>, <strong>CactUserBins</strong>, out-of-tree <strong>*-for-Cact</strong> drivers, <strong>LocalRepoCactOS</strong> (cctkfs.img), <strong>CactKernel</strong>, and <strong>CactBridge</strong> (ISO).
 </p>
 
 <p align="center">
@@ -30,48 +28,76 @@
   <a href="https://github.com/QwaYer/LocalRepoCactOS"><strong>LocalRepo</strong></a>
   &nbsp;·&nbsp;
   <a href="https://github.com/QwaYer/CactBridge"><strong>CactBridge</strong></a>
+  &nbsp;·&nbsp;
+  <a href="https://github.com/QwaYer/CactXfbdev-x86_32"><strong>CactXfbdev</strong></a>
 </p>
 
 ---
 
-## 📑 Contents
+## 📊 Stats
 
 | | |
-| --- | --- |
-| 🏗️ | [Building the workspace](#building-the-workspace) |
-| 🇬🇧 | [English: technical specifications](#english-technical-specifications) |
-| 🇷🇺 | [Русский: технические характеристики](#russian-technical-specifications) |
-| 🗺️ | [Architecture visualization](#architecture-visualization) |
-| 🙏 | [Credits and license](#credits-and-license) |
+|---|---|
+| **Repositories integrated** | 10+ (kernel, libc, shell, init, userbins, drivers, packer, bridge, Xfbdev, GUI) |
+| **Syscalls** | 95 — authoritative enum in `CactKernel-x86_32` [`syscalls.h`](https://github.com/QwaYer/CactKernel-x86_32/blob/main/Cact/kernel/core/syscalls/syscalls.h) |
+| **Default goal** | `iso-gui` — full ISO with GUI support |
+| **Drivers (out-of-tree)** | AHCI, NVMe, Virtio-net, Yukon (opt-in via `DRIVERS` variable) |
+| **Kernel arch** | i686 (32-bit x86 protected mode) |
+| **Boot** | Multiboot2 |
 
 ---
 
-<a id="building-the-workspace"></a>
+## 🔗 Ecosystem
 
-## 🏗️ Building the workspace
+| Component | Role |
+|---|---|
+| **[CactKernel-x86_32](https://github.com/QwaYer/CactKernel-x86_32)** | Hybrid monolithic kernel — C/Rust/ASM, MLFQ scheduler, PMM/VMM, TCP/IP |
+| **[CactLib-x86_32](https://github.com/QwaYer/CactLib-x86_32)** | Freestanding libc (`libc.a` / `libc.so`) — `int 0x80` syscall gateway |
+| **[Cactsole-x86_32](https://github.com/QwaYer/Cactsole-x86_32)** | Interactive shell — pipelines, redirections, job control, builtins |
+| **[Cgoct-x86_32](https://github.com/QwaYer/Cgoct-x86_32)** | Ring-3 supervisor (`/bin/init`) — respawns shell with crash-loop damping |
+| **[CactUserBins-x86_32](https://github.com/QwaYer/CactUserBins-x86_32)** | 36 userspace ELFs — `ls`, `cat`, `ping`, `dhcp`, `dns`, etc. |
+| **[CactXfbdev-x86_32](https://github.com/QwaYer/CactXfbdev-x86_32)** | Framebuffer compositor — GUI support on tty |
+| **[CactBridge](https://github.com/QwaYer/CactBridge)** | ISO packager — wraps kernel.bin + cctkfs.img via grub-mkrescue |
+| **[LocalRepoCactOS](../LocalRepoCactOS)** | Staging tree → `cctkfs.img` — PCI drivers + user ELFs in one Multiboot2 module |
+| **[Cgoct-gui-x86_32](https://github.com/QwaYer/Cgoct-gui-x86_32)** | GUI supervisor variant |
+| **[LocalRepoCactOS-gui](../LocalRepoCactOS-gui)** | GUI cctkfs staging tree |
 
-### 🇬🇧 English — Quick Start
+**`*-for-Cact` driver repos** (out-of-tree PCI modules packaged as `.cctk`):
+
+| Driver | Bus | Output |
+|---|---|---|
+| **[AHCI-for-Cact](https://github.com/QwaYer/AHCI-for-Cact)** | SATA HBA | `ahci.cctk` |
+| **[NVMe-for-Cact](https://github.com/QwaYer/NVMe-for-Cact)** | NVMe | `nvme.cctk` |
+| **[Virtio-net-for-Cact](https://github.com/QwaYer/Virtio-net-for-Cact)** | virtio NIC | `virtio_net.cctk` |
+| **[Yukon-for-Cact](https://github.com/QwaYer/Yukon-for-Cact)** | Yukon Ethernet | `yukon.cctk` |
+
+---
+
+## 🔨 Building
+
+**Quick start — full ISO + QEMU:**
 
 ```sh
 ./build-cact-qemu.sh           # full ISO + disk, 1 command
-./build-cact-qemu.sh && CACT_ISO=CactBridge/build/cact.iso CactKernel-x86_32/run_qemu.sh
 RUN_QEMU=1 ./build-cact-qemu.sh  # build + run
 ```
 
-**Or step by step from this directory:**
+**From this directory:**
 
 ```sh
-make -j$(nproc)               # full ISO  (default)
-make -j$(nproc) disk          # ISO + empty nvme.img
-make -j$(nproc) kernel        # kernel only
-make -j$(nproc) libc          # libc only
-make -j$(nproc) cactsole      # shell only
-make -j$(nproc) drivers       # all out-of-tree drivers only
+make -j$(nproc)               # default: iso-gui (kernel + GUI localrepo + ISO)
+make iso                      # non-GUI ISO (kernel + localrepo + ISO)
+make disk                     # iso + empty ext4 nvme.img
+make kernel                   # kernel only
+make libc                     # libc only
+make cactsole                 # shell only
+make drivers                  # all out-of-tree drivers only
 ```
 
 | Target | What you get |
-| --- | --- |
-| `make` / `make all` / `make iso` | **libc** → **cactsole** / **cgoct** → **CactUserBins** `install` → **`*.cctk`** → **`cctkfs.img`** → **kernel** → **`CactBridge/build/cact.iso`** |
+|---|---|
+| `make` / `make all` / `make iso-gui` | **kernel** → **gui-localrepo** (cgoct-gui + xfbdev + drivers) → **ISO via CactBridge `build.py --gui-iso`** |
+| `make iso` | **kernel** → **localrepo** (libc + cactsole + cgoct + xfbdev + userbins + drivers) → **ISO via CactBridge `build.py --non-gui-iso`** |
 | `make disk` | **iso** + empty **ext4** `CactKernel-x86_32/build/nvme.img` |
 | `make kernel` | Kernel only |
 | `make drivers` | Out-of-tree **`*-for-Cact`** modules only |
@@ -79,202 +105,151 @@ make -j$(nproc) drivers       # all out-of-tree drivers only
 
 Optional: `SKIP_DRIVERS=1`, `DRIVERS="AHCI NVMe Virtio-net Yukon"`, `JOBS=N`.
 
+### Component map (how `make` flows)
+
+```
+make libc ──────────► CactLib-x86_32 (libc.a / libc.so)
+make cactsole ──────► Cactsole-x86_32 (depends on libc)
+make cgoct ─────────► Cgoct-x86_32 (depends on libc)
+make userbins ──────► CactUserBins-x86_32 (depends on libc + cactsole includes)
+make xfbdev ────────► CactXfbdev-x86_32 (depends on libc)
+make drivers ───────► *-for-Cact repos → *.cctk into LocalRepoCactOS/lib/
+make localrepo ─────► LocalRepoCactOS → cctkfs.img (all userland + drivers)
+make kernel ────────► CactKernel-x86_32 → kernel.bin
+make iso ───────────► CactBridge build.py → cact.iso (kernel.bin + cctkfs.img)
+make iso-gui ───────► gui-localrepo → kernel → CactBridge build.py --gui-iso
+```
+
 ### Build individual components (standalone)
 
-Each component auto-detects sibling directories. Just run `make` from its directory:
+Each component auto-detects sibling directories:
 
 ```sh
 make -C CactLib-x86_32               # libc (no deps)
-make -C Cactsole-x86_32              # shell  (auto-finds ../CactLib-x86_32)
-make -C Cgoct-x86_32                 # init   (auto-finds ../CactLib-x86_32)
-make -C CactUserBins-x86_32 install  # userland utils (auto-finds all deps)
-make -C CactKernel-x86_32            # kernel only ISO
-make -C CactKernel-x86_32 iso-full   # kernel + userland ISO
+make -C Cactsole-x86_32              # shell (auto-finds ../CactLib-x86_32)
+make -C Cgoct-x86_32                 # init (auto-finds ../CactLib-x86_32)
+make -C CactXfbdev-x86_32            # framebuffer compositor (auto-finds ../CactLib-x86_32)
+make -C CactUserBins-x86_32 install  # userland utils
+make -C CactKernel-x86_32            # kernel only
 make -C AHCI-for-Cact install        # AHCI driver → LocalRepoCactOS/lib/
-make -C NVMe-for-Cact install        # NVMe driver
-make -C Virtio-net-for-Cact install  # virtio-net driver
-make -C Yukon-for-Cact install       # Yukon NIC driver
-make -C LocalRepoCactOS              # pack cctkfs.img (auto-finds all deps)
+make -C LocalRepoCactOS              # pack cctkfs.img
 make -C CactBridge iso               # ISO from kernel.bin + cctkfs.img
 ```
 
-Override any path if needed: `make -C CactKernel-x86_32 LOCAL_REPO=/other/path`.
-
 **QEMU:** set **`CACT_ISO`** to the ISO path and run `CactKernel-x86_32/run_qemu.sh`.
 
-### 🇷🇺 Русский — Быстрый старт
+---
 
-```sh
-./build-cact-qemu.sh           # полный ISO + диск, 1 команда
-RUN_QEMU=1 ./build-cact-qemu.sh  # собрать + запустить
+## 📂 Repository layout (this repo)
+
+```
+CactOS-x86_32/
+├── Makefile       # orchestrates all sibling repos
+├── LICENSE        # GPLv3
+└── README.md
 ```
 
-**Или по шагам из этого каталога:**
+This repo contains no source code — it is the **build conductor** that invokes `make` in sibling directories. All actual code lives in the repos listed above.
 
-```sh
-make -j$(nproc)               # полный ISO
-make -j$(nproc) disk          # ISO + пустой nvme.img
-make -j$(nproc) kernel        # только ядро
-make -j$(nproc) cactsole      # только оболочка
+### Sibling tree expected by `Makefile`
+
+```
+parent/
+├── CactOS-x86_32           ← you are here
+├── CactKernel-x86_32       ← hybrid kernel
+├── CactLib-x86_32          ← freestanding libc
+├── Cactsole-x86_32         ← interactive shell
+├── Cgoct-x86_32            ← /bin/init (supervisor)
+├── Cgoct-gui-x86_32        ← GUI supervisor
+├── CactUserBins-x86_32     ← 36 userspace tools
+├── CactXfbdev-x86_32       ← framebuffer compositor
+├── LocalRepoCactOS         ← cctkfs.img packer (non-GUI)
+├── LocalRepoCactOS-gui     ← cctkfs.img packer (GUI)
+├── CactBridge              ← ISO packager
+├── AHCI-for-Cact           ← AHCI driver module
+├── NVMe-for-Cact           ← NVMe driver module
+├── Virtio-net-for-Cact     ← virtio-net driver module
+├── Yukon-for-Cact          ← Yukon NIC driver module
+└── build-cact-qemu.sh      ← convenience one-shot script
 ```
 
-Переменные: `SKIP_DRIVERS=1`, `DRIVERS=…`, `JOBS=N`.
+---
 
-### Сборка отдельных компонентов
+## 🚀 Typical boot flow
 
-Каждый компонент автоопределяет соседей. Достаточно `make` из его каталога:
+Build: `make iso-gui` produces `CactBridge/build/cact.iso`. Boot sequence:
 
-```sh
-make -C CactLib-x86_32               # libc
-make -C Cactsole-x86_32              # оболочка
-make -C Cgoct-x86_32                 # init
-make -C CactUserBins-x86_32 install  # утилиты
-make -C CactKernel-x86_32            # ядро (ISO без userland)
-make -C CactKernel-x86_32 iso-full   # ядро с userland
-make -C AHCI-for-Cact install        # драйвер AHCI
-make -C LocalRepoCactOS              # упаковка cctkfs.img
-make -C CactBridge iso               # ISO из kernel.bin + cctkfs.img
+1. **GRUB** (Multiboot2) loads `kernel.bin` + `cctkfs.img` module
+2. **CactKernel** initialises: PMM/VMM → slab → PIC/IDT → PS/2 → PCI → xHCI → page cache → VFS → network → scheduler
+3. Kernel launches **`/bin/init`** — this is **cgoct** (or **cgoct-gui** for GUI builds)
+4. **cgoct** spawns **cactsole** (interactive shell)
+5. User has **36 tools** via **CactUserBins** on `PATH=/bin:/sbin`
+
+**Console banner:**
+
+```
+Cact Kernel 1.0.0
+--------------------------
+[VER] commit=…  built=…
+Kernel is ready. Launching init…
+
+cgoct: supervisor online
+  restart policy : always
+  rescue shell   : enabled
+  crash limit    : 4
+  cooldown       : 8 sec
+
+cact:/$
 ```
 
-**QEMU:** переменная **`CACT_ISO`**, либо **`cact.iso`** в **`build/`** ядра.
+---
+
+## 💾 Drivers (out-of-tree)
+
+Out-of-tree PCI drivers are compiled as relocatable `.cctk` ELFs and loaded by the kernel's `pci_load_module()` at runtime from the **cctkfs** archive.
+
+| Driver | Kernel name | PCI class | MSI-X |
+|---|---|---|---|
+| AHCI | SATA HBA | 0x010601 | Yes |
+| NVMe | NVM Express | 0x010802 | Yes |
+| Virtio-net | virtio NIC | 0x020000 (Virtio) | Yes |
+| Yukon | Marvell Yukon | 0x020000 | Yes |
+
+All out-of-tree drivers have been migrated from PIC-based IRQ to **MSI-X** for better performance and scalability.
 
 ---
 
-<a id="english-technical-specifications"></a>
+## 📞 System calls (95 total)
 
-## 🇬🇧 English: technical specifications (pre-1.0)
+Authoritative list: [`CactKernel-x86_32/syscalls.h`](https://github.com/QwaYer/CactKernel-x86_32/blob/main/Cact/kernel/core/syscalls/syscalls.h) — must stay byte-for-byte in sync with **[CactLib `syscall.h`](https://github.com/QwaYer/CactLib-x86_32/blob/main/include/syscall.h)**.
 
-### 🧠 Boot and core kernel
-
-- **Multiboot2** parser (framebuffer, memory map).
-- **GDT** (ring 0/3), **TSS** for stack switches.
-- **IDT**: 32 CPU exception ISRs, PIC (8259A), PIT 100 Hz.
-- **Kernel panic** with register dump.
-- **Exception → signal** (#DE/#MF → SIGFPE, #GP → SIGSEGV, else SIGKILL).
-- **Versioning**: `VERSION`, git hash, build time.
-
-### 🧠 Memory manager (Rust, `rust_mm`)
-
-- **PMM** / **VMM** / **heap** / **slab** / **mmap** / **COW** / **swap** / **page faults** / **OOM** / **shm**.
-
-### ⏱️ Scheduler (Rust, `sched`)
-
-- **MLFQ**, priority boost, sleep queue, timer wheel.
-
-### 🔒 Synchronization (Rust)
-
-- **Spinlock**, **IRQ spinlock**, **mutex**, **semaphore**.
-
-### 🧬 Processes and signals
-
-- **TaskStruct**, **fork** / **exec** / **exit** / **waitpid**, 13 signals, `sigaction`, `int 0x80` user return.
-
-### 📦 ELF and dynamic linking
-
-- **ELF loader**, **dynamic linker**, i386 relocations including **`R_386_COPY`**.
-
-### 📁 VFS and filesystems
-
-- **VFS**, **ext4**, **devfs**, **procfs**, **mntfs**, **etcfs**, **pipes**, minimal FS stubs.
-
-### 💾 Block I/O and drivers
-
-- **PCI**, **AHCI**, **NVMe**, caches, **xHCI**, **USB**, **PS/2**, **virtio-net**, **framebuffer**.
-
-### 🌐 Network stack
-
-- **skb** → Ethernet → ARP → IPv4 → ICMP / UDP / **TCP**, sockets, **knetd**, static IP.
-
-### 📞 System calls (73)
-
-| Group | Syscalls |
-| --- | --- |
-| Files | `open`, `read`, `write`, `close`, `create`, `delete`, `lseek`, `stat`, `fstat`, `getdents`, `rename`, `mkdir`, `rmdir`, `fcntl`, `ioctl`, `symlink`, `readlink`, `link`, `unlink` |
-| Processes | `fork`, `exec`, `exit`, `kill`, `signal`, `sigaction`, `sigreturn`, `sigprocmask`, `sigpending`, `sigsuspend`, `getpid`, `getppid`, `waitpid`, `sleep`, `brk`, `alarm`, `setitimer` |
-| Memory | `mmap`, `munmap`, `mprotect`, `shmget`, `shmat`, `shmdt`, `shmctl` |
-| Network | `socket`, `bind`, `connect`, `listen`, `accept`, `send`, `recv`, `sendto`, `recvfrom`, `shutdown`, `setsockopt`, `getsockopt`, `select`, `poll` |
-| I/O | `pipe`, `dup2`, `getcwd`, `chdir` |
-| Users | `getuid`, `getgid`, `setuid`, `setgid`, `geteuid`, `getegid`, `chmod`, `chown` |
-| Time | `gettimeofday`, `clock_gettime`, `nanosleep` |
-| Misc | `print` |
+| Group | Calls |
+|---|---|
+| **Debug** | `print` |
+| **Process** | `getpid` `getppid` `fork` `exec` `exit` `waitpid` `sleep` |
+| **Session** | `setsid` `setpgid` `getpgid` `getpgrp` |
+| **Signals** | `kill` `signal` `sigaction` `sigprocmask` `sigreturn` `sigpending` `sigsuspend` `alarm` `setitimer` |
+| **FD / IO** | `open` `read` `write` `close` `lseek` `ioctl` `fcntl` `dup` `dup2` `pipe` `select` `poll` |
+| **File metadata** | `stat` `fstat` `access` `chmod` `chown` `umask` `truncate` `ftruncate` `sync` `fsync` `mknod` |
+| **Paths** | `create` `mkdir` `rmdir` `delete` `unlink` `rename` `link` `symlink` `readlink` `getdents` `chdir` `getcwd` `chroot` |
+| **System** | `mount` `umount` `reboot` `uname` |
+| **Memory** | `brk` `mmap` `munmap` `mprotect` |
+| **SHM** | `shmget` `shmat` `shmdt` `shmctl` |
+| **Time** | `gettimeofday` `clock_gettime` `nanosleep` |
+| **Users** | `getuid` `getgid` `geteuid` `getegid` `setuid` `setgid` |
+| **Network** | `socket` `bind` `connect` `listen` `accept` `send` `recv` `sendto` `recvfrom` `shutdown` `setsockopt` `getsockopt` plus **`SYS_PING_ECHO` (90)**, **`SYS_NETCFG_SET` (91)**, **`SYS_DNS_RESOLVE` (94)** |
+| **Kernel modules** | `module_load` (92) `module_unload` (93) |
 
 ---
 
-<a id="russian-technical-specifications"></a>
+## ⚖️ License
 
-## 🇷🇺 Русский: технические характеристики (pre-1.0)
-
-### 🧠 Загрузка и ядро
-
-- **Multiboot2**, **GDT** / **TSS**, **IDT**, panic, исключения → сигналы, версия в бинарнике.
-
-### 🧠 Менеджер памяти (Rust, `rust_mm`)
-
-- **PMM**, **VMM**, **heap**, **slab**, **mmap**, **COW**, **swap**, fault, **OOM**, **shm**.
-
-### ⏱️ Планировщик (Rust, `sched`)
-
-- **MLFQ**, boost, sleep, timer wheel.
-
-### 🔒 Синхронизация (Rust)
-
-- **Spinlock**, **IRQ spinlock**, **mutex**, **semaphore**.
-
-### 🧬 Процессы и сигналы
-
-- **TaskStruct**, **fork** / **exec** / **exit** / **waitpid**, сигналы, маски, таймеры.
-
-### 📦 ELF и динамическая линковка
-
-- Загрузчик **ELF**, динлинкер, релокации.
-
-### 📁 VFS и файловые системы
-
-- **VFS**, **ext4**, **devfs**, **procfs**, **mntfs**, **etcfs**, **pipes**, заглушки.
-
-### 💾 Блочный ввод-вывод и драйверы
-
-- **PCI**, **AHCI**, **NVMe**, кеши, **USB**, **PS/2**, **virtio-net**, **framebuffer**.
-
-### 🌐 Сетевой стек
-
-- Полный стек до **TCP**, сокеты, **knetd**, статический IP.
-
-### 📞 Системные вызовы (73)
-
-| Группа | Вызовы |
-| --- | --- |
-| Файлы | `open`, `read`, `write`, `close`, `create`, `delete`, `lseek`, `stat`, `fstat`, `getdents`, `rename`, `mkdir`, `rmdir`, `fcntl`, `ioctl`, `symlink`, `readlink`, `link`, `unlink` |
-| Процессы | `fork`, `exec`, `exit`, `kill`, `signal`, `sigaction`, `sigreturn`, `sigprocmask`, `sigpending`, `sigsuspend`, `getpid`, `getppid`, `waitpid`, `sleep`, `brk`, `alarm`, `setitimer` |
-| Память | `mmap`, `munmap`, `mprotect`, `shmget`, `shmat`, `shmdt`, `shmctl` |
-| Сеть | `socket`, `bind`, `connect`, `listen`, `accept`, `send`, `recv`, `sendto`, `recvfrom`, `shutdown`, `setsockopt`, `getsockopt`, `select`, `poll` |
-| Ввод-вывод | `pipe`, `dup2`, `getcwd`, `chdir` |
-| Пользователи | `getuid`, `getgid`, `setuid`, `setgid`, `geteuid`, `getegid`, `chmod`, `chown` |
-| Время | `gettimeofday`, `clock_gettime`, `nanosleep` |
-| Прочее | `print` |
+**GNU General Public License v3.0** — see [`LICENSE`](LICENSE).
 
 ---
 
-<a id="architecture-visualization"></a>
-
-## 🗺️ Architecture visualization
-
-### 🇬🇧 English
-
-**React**-based map of memory, drivers, and networking: [open the architecture map](https://htmlpreview.github.io/?https://github.com/CactKernelProject/CactOS/blob/main/docs/architecture.html) or open **`docs/architecture.html`** from a clone.
-
-### 🇷🇺 Русский
-
-Интерактивная схема: [карта архитектуры](https://htmlpreview.github.io/?https://github.com/CactKernelProject/CactOS/blob/main/docs/architecture.html) или файл **`docs/architecture.html`** локально.
-
----
-
-<a id="credits-and-license"></a>
-
-## 🙏 Credits and license
-
-| | |
-| --- | --- |
-| **Developer** | [QwaYer](https://github.com/QwaYer) |
-| **License** | [GNU General Public License v3.0](https://github.com/CactKernelProject/CactOS/blob/main/LICENSE) |
-| **Repository** | [CactOS on GitHub](https://github.com/CactKernelProject/CactOS) |
+<p align="center">
+  <strong>Developer:</strong> <a href="https://github.com/QwaYer">QwaYer</a>
+  &nbsp;·&nbsp; <strong>Kernel:</strong> <a href="https://github.com/QwaYer/CactKernel-x86_32">CactKernel-x86_32</a>
+  &nbsp;·&nbsp; <strong>Libc:</strong> <a href="https://github.com/QwaYer/CactLib-x86_32">CactLib-x86_32</a>
+</p>
