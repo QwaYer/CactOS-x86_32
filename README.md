@@ -215,7 +215,7 @@ Out-of-tree PCI drivers are compiled as relocatable `.cctk` ELFs and loaded by t
 | Virtio-net | virtio NIC | 0x020000 (Virtio) | Yes |
 | Yukon | Marvell Yukon | 0x020000 | Yes |
 
-All out-of-tree drivers have been migrated from PIC-based IRQ to **MSI-X** for better performance and scalability. Kernel syscall dispatch uses **`sysenter`** (legacy `int 0x80` removed).
+All out-of-tree drivers have been migrated from PIC-based IRQ to **MSI-X**. Kernel syscall dispatch uses **`sysenter`** (primary, with `int 0x80` fallback).
 
 ---
 
