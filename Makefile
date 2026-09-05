@@ -1,7 +1,7 @@
 ROOT := $(abspath ..)
 
 KERN := $(ROOT)/CactKernel-x86_32
-REPO := $(ROOT)/LocalRepoCactOS
+REPO := $(ROOT)/LocalRepoCactOS-x86_32
 BRIDGE := $(ROOT)/CactBridge
 LIB := $(ROOT)/CactLib-x86_32
 SOLE := $(ROOT)/Cactsole-x86_32
@@ -12,7 +12,7 @@ XFBDEV := $(ROOT)/CactXfbdev-x86_32
 OPTICS := $(ROOT)/Optics
 
 JOBS ?= $(shell nproc 2>/dev/null || echo 4)
-DRIVERS ?= AHCI NVMe Virtio-net Yukon
+DRIVERS ?= AHCI NVMe Virtio-net Yukon EXT4
 
 ifneq ($(SKIP_DRIVERS),1)
 LOCALREPO_PRE := drivers
@@ -42,7 +42,10 @@ userbins: libc
 
 drivers:
 	@set -e; for d in $(DRIVERS); do \
-		dir="$(ROOT)/$$d-for-Cact"; \
+		dir="$(ROOT)/$$d-for-Cact-x86_32"; \
+		if test -d "$$dir"; then :; \
+		else dir="$(ROOT)/$$d-for-Cact"; \
+		fi; \
 		test -d "$$dir" || continue; \
 		$(MAKE) -s -C "$$dir" -j$(JOBS) KERN_ROOT="$(KERN)" LOCAL_REPO="$(REPO)" install; \
 	done
