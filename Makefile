@@ -12,7 +12,7 @@ XFBDEV := $(ROOT)/CactXfbdev-x86_32
 OPTICS := $(ROOT)/Optics
 
 JOBS ?= $(shell nproc 2>/dev/null || echo 4)
-DRIVERS ?= AHCI NVMe Virtio-net Yukon EXT4
+DRIVERS ?= AHCI NVMe Virtio-net Yukon EXT4 FAT32
 
 ifneq ($(SKIP_DRIVERS),1)
 LOCALREPO_PRE := drivers
@@ -98,7 +98,10 @@ all: iso-gui
 
 clean:
 	@set -e; for d in $(DRIVERS); do \
-		dir="$(ROOT)/$$d-for-Cact"; \
+		dir="$(ROOT)/$$d-for-Cact-x86_32"; \
+		if test -d "$$dir"; then :; \
+		else dir="$(ROOT)/$$d-for-Cact"; \
+		fi; \
 		test -d "$$dir" || continue; \
 		$(MAKE) -s -C "$$dir" clean; \
 	done
