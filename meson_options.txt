@@ -1,0 +1,2 @@
+option('bridge', type: 'string', value: '../CactBridge-x86',
+  description: 'CactBridge directory holding build.py, relative to this repo or absolute')

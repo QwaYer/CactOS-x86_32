@@ -82,59 +82,62 @@
 RUN_QEMU=1 ./build-cact-qemu.sh  # build + run
 ```
 
-**From this directory:**
+**From this directory (Meson + Ninja):**
 
 ```sh
-make -j$(nproc)               # default: iso-gui (kernel + GUI localrepo + ISO)
-make iso                      # non-GUI ISO (kernel + localrepo + ISO)
-make disk                     # iso + empty ext4 nvme.img
-make kernel                   # kernel only
-make libc                     # libc only
-make cactsole                 # shell only
-make drivers                  # all out-of-tree drivers only
+meson setup build-meson
+ninja -C build-meson stage    # libc → cactsole/cgoct → userbins → drivers → cctkfs.img
+ninja -C build-meson kernel   # kernel.bin only
+ninja -C build-meson iso      # non-GUI ISO via CactBridge build.py --non-gui-iso
+ninja -C build-meson iso-gui  # GUI ISO via CactBridge build.py --gui-iso
+ninja -C build-meson disk     # empty ext4 CactKernel-x86_32/build/nvme.img
 ```
 
 | Target | What you get |
 |---|---|
-| `make` / `make all` / `make iso-gui` | **kernel** → **gui-localrepo** (cgoct-gui + xfbdev + drivers) → **ISO via CactBridge `build.py --gui-iso`** |
-| `make iso` | **kernel** → **localrepo** (libc + cactsole + cgoct + xfbdev + userbins + drivers) → **ISO via CactBridge `build.py --non-gui-iso`** |
-| `make disk` | **iso** + empty **ext4** `CactKernel-x86_32/build/nvme.img` |
-| `make kernel` | Kernel only |
-| `make drivers` | Out-of-tree **`*-for-Cact`** modules only |
-| `make libc`, `make localrepo`, … | Fine-grained steps (see [`Makefile`](Makefile)) |
+| `ninja -C build-meson stage` | **libc** → **cactsole/cgoct** → **userbins** → **drivers** → **LocalRepoCactOS-x86_32** (`cctkfs.img`) → **kernel.bin** |
+| `ninja -C build-meson iso` | **kernel** → **localrepo** → **ISO via CactBridge `build.py --non-gui-iso`** |
+| `ninja -C build-meson iso-gui` | Same, through **`build.py --gui-iso`** |
+| `ninja -C build-meson disk` | **iso** + empty **ext4** `CactKernel-x86_32/build/nvme.img` |
+| `ninja -C build-meson kernel` | Kernel only |
+| `ninja -C build-meson drivers` | Out-of-tree **`*-for-Cact-x86_32`** modules only |
+| `ninja -C build-meson libc`, `… userbins`, `… localrepo`, … | Fine-grained steps |
+| `ninja -C build-meson distclean` | Clean every sibling build directory |
 
-Optional: `SKIP_DRIVERS=1`, `DRIVERS="AHCI NVMe Virtio-net Yukon"`, `JOBS=N`.
+Meson reserves the target names `install`/`test`/`clean`, hence **`stage`** and **`distclean`**.
 
-### Component map (how `make` flows)
+### Component map (how the chain flows)
 
 ```
-make libc ──────────► CactLib-x86_32 (libc.a / libc.so)
-make cactsole ──────► Cactsole-x86_32 (depends on libc)
-make cgoct ─────────► Cgoct-x86_32 (depends on libc)
-make userbins ──────► CactUserBins-x86_32 (depends on libc + cactsole includes)
-make xfbdev ────────► CactXfbdev-x86_32 (depends on libc)
-make drivers ───────► *-for-Cact repos → *.cctk into LocalRepoCactOS/lib/
-make localrepo ─────► LocalRepoCactOS → cctkfs.img (all userland + drivers)
-make kernel ────────► CactKernel-x86_32 → kernel.bin
-make iso ───────────► CactBridge build.py → cact.iso (kernel.bin + cctkfs.img)
-make iso-gui ───────► gui-localrepo → kernel → CactBridge build.py --gui-iso
+ninja stage ─ libc ─────► CactLibc-x86_32 (clibc.so / ld.so / start.o)
+              cactsole ─► Cactsole-x86_32 (depends on libc)
+              cgoct ────► Cgoct-x86_32 (depends on libc)
+              userbins ─► CactUserBins-x86_32 (depends on libc + cactsole includes)
+              drivers ──► *-for-Cact-x86_32 modules → *.cctk into LocalRepoCactOS-x86_32/lib/
+              localrepo ► LocalRepoCactOS-x86_32 → cctkfs.img (all userland + modules)
+ninja kernel ───────────► CactKernel-x86_32 → build-meson/kernel.bin
+ninja iso ──────────────► CactBridge-x86 build.py → cact-non-gui.iso
+ninja iso-gui ──────────► CactBridge-x86 build.py --gui-iso
 ```
 
 ### Build individual components (standalone)
 
-Each component auto-detects sibling directories:
+Each component is its own Meson project with sensible sibling defaults:
 
 ```sh
-make -C CactLib-x86_32               # libc (no deps)
-make -C Cactsole-x86_32              # shell (auto-finds ../CactLib-x86_32)
-make -C Cgoct-x86_32                 # init (auto-finds ../CactLib-x86_32)
-make -C CactXfbdev-x86_32            # framebuffer compositor (auto-finds ../CactLib-x86_32)
-make -C CactUserBins-x86_32 install  # userland utils
-make -C CactKernel-x86_32            # kernel only
-make -C AHCI-for-Cact install        # AHCI driver → LocalRepoCactOS/lib/
-make -C LocalRepoCactOS              # pack cctkfs.img
-make -C CactBridge iso               # ISO from kernel.bin + cctkfs.img
+meson setup CactLibc-x86_32/build-meson --cross-file CactLibc-x86_32/cross/i686-cact-clang.ini
+ninja -C CactLibc-x86_32/build-meson             # libc (no deps)
+ninja -C Cactsole-x86_32/build-meson             # shell (auto-finds ../CactLibc-x86_32)
+ninja -C Cgoct-x86_32/build-meson                # init/supervisor (auto-finds ../CactLibc-x86_32)
+ninja -C CactUserBins-x86_32/build-meson stage   # userland utils → LocalRepo
+ninja -C CactKernel-x86_32/build-meson           # kernel only
+ninja -C AHCI-for-Cact-x86_32/build-meson stage  # AHCI driver → LocalRepoCactOS-x86_32/lib/
+ninja -C LocalRepoCactOS-x86_32/build-meson stage # pack cctkfs.img
+python3 CactBridge-x86/build.py --non-gui-iso    # ISO from kernel.bin + cctkfs.img
 ```
+
+Siblings that have never been configured are set up automatically when driven
+through this repo's targets.
 
 **QEMU:** set **`CACT_ISO`** to the ISO path and run `CactKernel-x86_32/run_qemu.sh`.
 
@@ -144,14 +147,14 @@ make -C CactBridge iso               # ISO from kernel.bin + cctkfs.img
 
 ```
 CactOS-x86_32/
-├── Makefile       # orchestrates all sibling repos
+├── meson.build    # orchestrates all sibling repos
 ├── LICENSE        # GPLv3
 └── README.md
 ```
 
-This repo contains no source code — it is the **build conductor** that invokes `make` in sibling directories. All actual code lives in the repos listed above.
+This repo contains no source code — it is the **build conductor** that drives `ninja` in sibling build directories. All actual code lives in the repos listed above.
 
-### Sibling tree expected by `Makefile`
+### Sibling tree expected by `meson.build`
 
 ```
 parent/
@@ -177,7 +180,7 @@ parent/
 
 ## 🚀 Typical boot flow
 
-Build: `make iso-gui` produces `CactBridge/build/cact.iso`. Boot sequence:
+Build: `ninja -C build-meson iso-gui` produces `CactBridge-x86/build/cact-gui.iso`. Boot sequence:
 
 1. **GRUB** (Multiboot2) loads `kernel.bin` + `cctkfs.img` module
 2. **CactKernel** initialises: PMM/VMM → slab → PIC/IDT → PS/2 → PCI → xHCI → page cache → VFS → network → scheduler
