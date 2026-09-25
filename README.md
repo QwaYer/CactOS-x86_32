@@ -11,13 +11,13 @@
 
 <p align="center">
   <strong>Workspace integrator</strong> for <strong>CactOS</strong> — builds the full ISO from kernel, libc, drivers, shell, and userland.<br>
-  One <code>make</code> drives <strong>CactLib</strong>, <strong>Cactsole</strong>, <strong>Cgoct</strong>, <strong>CactUserBins</strong>, out-of-tree <strong>*-for-Cact</strong> drivers, <strong>LocalRepoCactOS</strong> (cctkfs.img), <strong>CactKernel</strong>, and <strong>CactBridge</strong> (ISO).
+  One <code>ninja -C build-meson stage</code> drives <strong>CactLib</strong>, <strong>Cactsole</strong>, <strong>Cgoct</strong>, <strong>CactUserBins</strong>, out-of-tree <strong>*-for-Cact</strong> drivers, <strong>LocalRepoCactOS-x86_32</strong> (cctkfs.img), <strong>CactKernel</strong>, and <strong>CactBridge</strong> (ISO).
 </p>
 
 <p align="center">
   <a href="https://github.com/QwaYer/CactKernel-x86_32"><strong>CactKernel</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/QwaYer/CactLib-x86_32"><strong>CactLib</strong></a>
+  <a href="https://github.com/QwaYer/CactLibc-x86_32"><strong>CactLib</strong></a>
   &nbsp;·&nbsp;
   <a href="https://github.com/QwaYer/Cactsole-x86_32"><strong>Cactsole</strong></a>
   &nbsp;·&nbsp;
@@ -25,9 +25,9 @@
   &nbsp;·&nbsp;
   <a href="https://github.com/QwaYer/CactUserBins-x86_32"><strong>CactUserBins</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/QwaYer/LocalRepoCactOS"><strong>LocalRepo</strong></a>
+  <a href="https://github.com/QwaYer/LocalRepoCactOS-x86_32"><strong>LocalRepo</strong></a>
   &nbsp;·&nbsp;
-  <a href="https://github.com/QwaYer/CactBridge"><strong>CactBridge</strong></a>
+  <a href="https://github.com/QwaYer/CactBridge-x86"><strong>CactBridge</strong></a>
   &nbsp;·&nbsp;
   <a href="https://github.com/QwaYer/CactXfbdev-x86_32"><strong>CactXfbdev</strong></a>
 </p>
@@ -39,9 +39,9 @@
 | | |
 |---|---|
 | **Repositories integrated** | 10+ (kernel, libc, shell, init, userbins, drivers, packer, bridge, Xfbdev, GUI) |
-| **Syscalls** | 95 — authoritative enum in `CactKernel-x86_32` [`syscalls.h`](https://github.com/QwaYer/CactKernel-x86_32/blob/main/Cact/kernel/core/syscalls/syscalls.h) |
+| **Syscall traps** | 15 — authoritative enum in `CactKernel-x86_32` [`syscalls.h`](https://github.com/QwaYer/CactKernel-x86_32/blob/main/Cact/kernel/core/syscall/syscalls.h); every other operation is a VFS-node ioctl ([`ioctl_abi.h`](https://github.com/QwaYer/CactKernel-x86_32/blob/main/Cact/kernel/core/syscall/ioctl_abi.h)) |
 | **Default goal** | `iso-gui` — full ISO with GUI support |
-| **Drivers (out-of-tree)** | AHCI, NVMe, Virtio-net, Yukon (opt-in via `DRIVERS` variable) |
+| **Drivers (out-of-tree)** | AHCI, NVMe, Virtio-net, Yukon, Intel-HDA (PCI `.cctk`) + EXT4, FAT32 (filesystem `.cctk`) — staged by the `drivers` target |
 | **Kernel arch** | i686 (32-bit x86 protected mode) |
 | **Boot** | Multiboot2 |
 
@@ -52,13 +52,13 @@
 | Component | Role |
 |---|---|
 | **[CactKernel-x86_32](https://github.com/QwaYer/CactKernel-x86_32)** | Hybrid monolithic kernel — C/Rust/ASM, MLFQ scheduler, PMM/VMM, TCP/IP |
-| **[CactLib-x86_32](https://github.com/QwaYer/CactLib-x86_32)** | Freestanding libc (`libc.a` / `libc.so`) — `int 0x80` syscall gateway |
+| **[CactLib-x86_32](https://github.com/QwaYer/CactLibc-x86_32)** | Freestanding libc (`libc.a` / `libc.so`) — `sysenter` syscall gateway (`int 0x80` fallback); TLS 1.3 client |
 | **[Cactsole-x86_32](https://github.com/QwaYer/Cactsole-x86_32)** | Interactive shell — pipelines, redirections, job control, builtins |
 | **[Cgoct-x86_32](https://github.com/QwaYer/Cgoct-x86_32)** | Ring-3 supervisor (`/bin/init`) — respawns shell with crash-loop damping |
-| **[CactUserBins-x86_32](https://github.com/QwaYer/CactUserBins-x86_32)** | 36 userspace ELFs — `ls`, `cat`, `ping`, `dhcp`, `dns`, etc. |
+| **[CactUserBins-x86_32](https://github.com/QwaYer/CactUserBins-x86_32)** | 46 userspace tools — `ls`, `cat`, `ping`, `ip`, `wget`, etc. |
 | **[CactXfbdev-x86_32](https://github.com/QwaYer/CactXfbdev-x86_32)** | Framebuffer compositor — GUI support on tty |
-| **[CactBridge](https://github.com/QwaYer/CactBridge)** | ISO packager — wraps kernel.bin + cctkfs.img via grub-mkrescue |
-| **[LocalRepoCactOS](../LocalRepoCactOS)** | Staging tree → `cctkfs.img` — PCI drivers + user ELFs in one Multiboot2 module |
+| **[CactBridge](https://github.com/QwaYer/CactBridge-x86)** | ISO packager — wraps kernel.bin + cctkfs.img via grub-mkrescue |
+| **[LocalRepoCactOS-x86_32](../LocalRepoCactOS-x86_32)** | Staging tree → `cctkfs.img` — PCI drivers + user ELFs in one Multiboot2 module |
 | **[Cgoct-gui-x86_32](https://github.com/QwaYer/Cgoct-gui-x86_32)** | GUI supervisor variant |
 | **[LocalRepoCactOS-gui](../LocalRepoCactOS-gui)** | GUI cctkfs staging tree |
 
@@ -66,10 +66,13 @@
 
 | Driver | Bus | Output |
 |---|---|---|
-| **[AHCI-for-Cact](https://github.com/QwaYer/AHCI-for-Cact)** | SATA HBA | `ahci.cctk` |
-| **[NVMe-for-Cact](https://github.com/QwaYer/NVMe-for-Cact)** | NVMe | `nvme.cctk` |
-| **[Virtio-net-for-Cact](https://github.com/QwaYer/Virtio-net-for-Cact)** | virtio NIC | `virtio_net.cctk` |
-| **[Yukon-for-Cact](https://github.com/QwaYer/Yukon-for-Cact)** | Yukon Ethernet | `yukon.cctk` |
+| **[AHCI-for-Cact](https://github.com/QwaYer/AHCI-for-Cact-x86_32)** | SATA HBA | `ahci.cctk` |
+| **[NVMe-for-Cact](https://github.com/QwaYer/NVMe-for-Cact-x86_32)** | NVMe | `nvme.cctk` |
+| **[Virtio-net-for-Cact](https://github.com/QwaYer/Virtio-net-for-Cact-x86_32)** | virtio NIC | `virtio_net.cctk` |
+| **[Yukon-for-Cact](https://github.com/QwaYer/Yukon-for-Cact-x86_32)** | Yukon Ethernet | `yukon.cctk` |
+| **[Intel-HDA-for-Cact](https://github.com/QwaYer/Intel-HDA-for-Cact-x86_32)** | HD Audio | `hda.cctk` |
+| **[EXT4-for-Cact](https://github.com/QwaYer/EXT4-for-Cact-x86_32)** | ext4 filesystem (`fs_mod`) | `ext4.cctk` |
+| **[FAT32-for-Cact](https://github.com/QwaYer/FAT32-for-Cact-x86_32)** | FAT32 filesystem (`fs_mod`) | `fat32.cctk` |
 
 ---
 
@@ -164,15 +167,18 @@ parent/
 ├── Cactsole-x86_32         ← interactive shell
 ├── Cgoct-x86_32            ← /bin/init (supervisor)
 ├── Cgoct-gui-x86_32        ← GUI supervisor
-├── CactUserBins-x86_32     ← 36 userspace tools
+├── CactUserBins-x86_32     ← 46 userspace tools
 ├── CactXfbdev-x86_32       ← framebuffer compositor
-├── LocalRepoCactOS         ← cctkfs.img packer (non-GUI)
+├── LocalRepoCactOS-x86_32  ← cctkfs.img packer (non-GUI)
 ├── LocalRepoCactOS-gui     ← cctkfs.img packer (GUI)
-├── CactBridge              ← ISO packager
-├── AHCI-for-Cact           ← AHCI driver module
-├── NVMe-for-Cact           ← NVMe driver module
-├── Virtio-net-for-Cact     ← virtio-net driver module
-├── Yukon-for-Cact          ← Yukon NIC driver module
+├── CactBridge-x86          ← ISO packager
+├── AHCI-for-Cact-x86_32    ← AHCI driver module
+├── NVMe-for-Cact-x86_32    ← NVMe driver module
+├── Virtio-net-for-Cact-x86_32 ← virtio-net driver module
+├── Yukon-for-Cact-x86_32   ← Yukon NIC driver module
+├── Intel-HDA-for-Cact-x86_32 ← HD Audio driver module
+├── EXT4-for-Cact-x86_32    ← ext4 filesystem module
+├── FAT32-for-Cact-x86_32   ← FAT32 filesystem module
 └── build-cact-qemu.sh      ← convenience one-shot script
 ```
 
@@ -183,15 +189,15 @@ parent/
 Build: `ninja -C build-meson iso-gui` produces `CactBridge-x86/build/cact-gui.iso`. Boot sequence:
 
 1. **GRUB** (Multiboot2) loads `kernel.bin` + `cctkfs.img` module
-2. **CactKernel** initialises: PMM/VMM → slab → PIC/IDT → PS/2 → PCI → xHCI → page cache → VFS → network → scheduler
+2. **CactKernel** initialises: PMM/VMM → slab → I/O APIC + IDT → PCI → xHCI → page cache → VFS → network → scheduler
 3. Kernel launches **`/bin/init`** — this is **cgoct** (or **cgoct-gui** for GUI builds)
 4. **cgoct** spawns **cactsole** (interactive shell)
-5. User has **36 tools** via **CactUserBins** on `PATH=/bin:/sbin`
+5. User has **46 tools** via **CactUserBins** on `PATH=/bin:/sbin`
 
 **Console banner:**
 
 ```
-Cact Kernel 1.0.0
+Cact Kernel 2.0.0
 --------------------------
 [VER] commit=…  built=…
 Kernel is ready. Launching init…
@@ -211,37 +217,36 @@ cact:/$
 
 Out-of-tree PCI drivers are compiled as relocatable `.cctk` ELFs and loaded by the kernel's `pci_load_module()` at runtime from the **cctkfs** archive.
 
-| Driver | Kernel name | PCI class | MSI-X |
+| Driver | Kernel name | PCI class | IRQ |
 |---|---|---|---|
-| AHCI | SATA HBA | 0x010601 | Yes |
-| NVMe | NVM Express | 0x010802 | Yes |
-| Virtio-net | virtio NIC | 0x020000 (Virtio) | Yes |
-| Yukon | Marvell Yukon | 0x020000 | Yes |
+| AHCI | SATA HBA | 0x010601 | MSI-X / MSI |
+| NVMe | NVM Express | 0x010802 | MSI-X / MSI |
+| Virtio-net | virtio NIC | 0x020000 (Virtio) | MSI-X / MSI |
+| Yukon | Marvell Yukon | 0x020000 | MSI-X / MSI |
+| Intel-HDA | HD Audio | 0x040300 | MSI-X / MSI |
 
-All out-of-tree drivers have been migrated from PIC-based IRQ to **MSI-X**. Kernel syscall dispatch uses **`sysenter`** (primary, with `int 0x80` fallback).
+EXT4 and FAT32 are filesystem modules (`fs_mod`), not PCI devices; they are staged the same way. Every out-of-tree driver registers its interrupt through the kernel's **`msidev_register()`** (MSI-X when the device offers it, otherwise MSI), replacing the old PIC IRQ lines. Kernel syscall dispatch uses **`sysenter`** (primary, with `int 0x80` fallback).
 
 ---
 
-## 📞 System calls (95 total)
+## 📞 System calls (15 traps + VFS ioctls)
 
-Authoritative list: [`CactKernel-x86_32/syscalls.h`](https://github.com/QwaYer/CactKernel-x86_32/blob/main/Cact/kernel/core/syscalls/syscalls.h) — must stay byte-for-byte in sync with **[CactLib `syscall.h`](https://github.com/QwaYer/CactLib-x86_32/blob/main/include/syscall.h)**.
+The kernel traps for exactly **15** syscalls; everything else is a **VFS-node service** reached through `ioctl` on the node. Authoritative lists: [`syscalls.h`](https://github.com/QwaYer/CactKernel-x86_32/blob/main/Cact/kernel/core/syscall/syscalls.h) (traps) and [`ioctl_abi.h`](https://github.com/QwaYer/CactKernel-x86_32/blob/main/Cact/kernel/core/syscall/ioctl_abi.h) (commands and structs) — both must stay byte-for-byte in sync with **[CactLib `syscall.h`](https://github.com/QwaYer/CactLibc-x86_32/blob/main/include/syscall.h)**.
 
-| Group | Calls |
-|---|---|
-| **Debug** | `print` |
-| **Process** | `getpid` `getppid` `fork` `exec` `exit` `waitpid` `sleep` |
-| **Session** | `setsid` `setpgid` `getpgid` `getpgrp` |
-| **Signals** | `kill` `signal` `sigaction` `sigprocmask` `sigreturn` `sigpending` `sigsuspend` `alarm` `setitimer` |
-| **FD / IO** | `open` `read` `write` `close` `lseek` `ioctl` `fcntl` `dup` `dup2` `pipe` `select` `poll` |
-| **File metadata** | `stat` `fstat` `access` `chmod` `chown` `umask` `truncate` `ftruncate` `sync` `fsync` `mknod` |
-| **Paths** | `create` `mkdir` `rmdir` `delete` `unlink` `rename` `link` `symlink` `readlink` `getdents` `chdir` `getcwd` `chroot` |
-| **System** | `mount` `umount` `reboot` `uname` |
-| **Memory** | `brk` `mmap` `munmap` `mprotect` |
-| **SHM** | `shmget` `shmat` `shmdt` `shmctl` |
-| **Time** | `gettimeofday` `clock_gettime` `nanosleep` |
-| **Users** | `getuid` `getgid` `geteuid` `getegid` `setuid` `setgid` |
-| **Network** | `socket` `bind` `connect` `listen` `accept` `send` `recv` `sendto` `recvfrom` `shutdown` `setsockopt` `getsockopt` plus **`SYS_PING_ECHO` (90)**, **`SYS_NETCFG_SET` (91)**, **`SYS_DNS_RESOLVE` (94)** |
-| **Kernel modules** | `module_load` (92) `module_unload` (93) |
+| Group | Via | Operations |
+|---|---|---|
+| **Core traps** | `sysenter` | `open` `close` `read` `write` `ioctl` `poll` `fork` `exec` `exit` `waitpid` `brk` `mmap` `munmap` `mprotect` `sigreturn` |
+| **Debug** | write to `/dev/console` | `kprint` |
+| **FD / IO** | `CACT_FDCTL_*` (0x3000) | `dup` `dup2` `fcntl` `lseek` `fstat` `ftruncate` `getdents` `fsync` |
+| **Paths / metadata** | `CACT_DIRCTL_*` (0x3100) | `openat` `create` `mkdir` `rmdir` `unlink` `link` `symlink` `readlink` `rename` `stat` `access` `chmod` `chown` `truncate` `mknod` |
+| **Process / session / signals / SHM** | `CACT_PROCCTL_*` (0x3200) | `setsid` `setpgid` `getpgid` `setuid` `setgid` `umask` `chdir` `chroot` `kill` `sigaction` `sigprocmask` `alarm` `setitimer` `shmget` `shmat` `shmdt` `shmctl` |
+| **Sockets** | `CACT_SOCKCTL_*` (0x3300) | `bind` `connect` `listen` `accept` `shutdown` `setsockopt` `getsockopt` `sendto` `recvfrom` `getsockname` `getpeername` (data via `read`/`write`) |
+| **Network** | `CACT_NETCTL_*` (0x3400) on `/dev/net` | socket creation, `ping` / `ping_wait`, `dns_resolve`, `netcfg` / `netcfg_get`, `socketpair` |
+| **System** | `CACT_SYSCTL_*` (0x3500) on `/dev/sys` | `mount` `umount` `reboot`, kernel module load/unload |
+| **Pipes** | `CACT_PIPECTL_*` (0x3600) on `/dev/pipe` | `pipe` |
+| **Crypto** | `CACT_CRYPTCTL_*` (0x3700) on `/dev/crypto` | `random`, hash/HMAC/HKDF, AES-GCM, X25519/P-256, `sig_verify`, `x509_verify` |
+| **TTY / PTY** | `CACT_TTYCTL_*` (0x3D00) / `CACT_PTYCTL_*` (0x3E00) | VT activate/state, controlling tty, pts number/lock |
+| **Info** | `/proc/*` | pid/ppid and friends via `/proc/self/info`; time via `/proc/time` and `/proc/wallclock`; `uname` via `/proc/uname` |
 
 ---
 
@@ -254,5 +259,5 @@ Authoritative list: [`CactKernel-x86_32/syscalls.h`](https://github.com/QwaYer/C
 <p align="center">
   <strong>Developer:</strong> <a href="https://github.com/QwaYer">QwaYer</a>
   &nbsp;·&nbsp; <strong>Kernel:</strong> <a href="https://github.com/QwaYer/CactKernel-x86_32">CactKernel-x86_32</a>
-  &nbsp;·&nbsp; <strong>Libc:</strong> <a href="https://github.com/QwaYer/CactLib-x86_32">CactLib-x86_32</a>
+  &nbsp;·&nbsp; <strong>Libc:</strong> <a href="https://github.com/QwaYer/CactLibc-x86_32">CactLib-x86_32</a>
 </p>
