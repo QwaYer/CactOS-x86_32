@@ -40,7 +40,7 @@ userbins = siblings / 'CactUserBins-x86_32'
 repo = siblings / 'LocalRepoCactOS-x86_32'
 
 # Module repos whose .cctk blobs belong in the image.
-_driver_names = ['AHCI', 'NVMe', 'Virtio-net', 'Yukon', 'Intel-HDA', 'EXT4', 'FAT32']
+_driver_names = ['AHCI', 'NVMe', 'Virtio-net', 'Yukon', 'Intel-HDA', 'EXT4', 'FAT32', 'RT2800USB']
 
 # ------------------------------------------------------------------------------
 # Sibling invocation: configure on first use, then run a target

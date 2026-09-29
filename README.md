@@ -54,7 +54,7 @@
 | **[CactKernel-x86_32](https://github.com/QwaYer/CactKernel-x86_32)** | Hybrid monolithic kernel — C/Rust/ASM, MLFQ scheduler, PMM/VMM, TCP/IP |
 | **[CactLib-x86_32](https://github.com/QwaYer/CactLibc-x86_32)** | Freestanding libc (`libc.a` / `libc.so`) — `sysenter` syscall gateway (`int 0x80` fallback); TLS 1.3 client |
 | **[Cactsole-x86_32](https://github.com/QwaYer/Cactsole-x86_32)** | Interactive shell — pipelines, redirections, job control, builtins |
-| **[Cgoct-x86_32](https://github.com/QwaYer/Cgoct-x86_32)** | Ring-3 supervisor (`/bin/init`) — respawns shell with crash-loop damping |
+| **[Cgoct-x86_32](https://github.com/QwaYer/Cgoct-x86_32)** | Ring-3 supervisor (`/usr/bin/init`) — respawns shell with crash-loop damping |
 | **[CactUserBins-x86_32](https://github.com/QwaYer/CactUserBins-x86_32)** | 46 userspace tools — `ls`, `cat`, `ping`, `ip`, `wget`, etc. |
 | **[CactXfbdev-x86_32](https://github.com/QwaYer/CactXfbdev-x86_32)** | Framebuffer compositor — GUI support on tty |
 | **[CactBridge](https://github.com/QwaYer/CactBridge-x86)** | ISO packager — wraps kernel.bin + cctkfs.img via grub-mkrescue |
@@ -165,7 +165,7 @@ parent/
 ├── CactKernel-x86_32       ← hybrid kernel
 ├── CactLib-x86_32          ← freestanding libc
 ├── Cactsole-x86_32         ← interactive shell
-├── Cgoct-x86_32            ← /bin/init (supervisor)
+├── Cgoct-x86_32            ← /usr/bin/init (supervisor)
 ├── Cgoct-gui-x86_32        ← GUI supervisor
 ├── CactUserBins-x86_32     ← 46 userspace tools
 ├── CactXfbdev-x86_32       ← framebuffer compositor
@@ -190,9 +190,9 @@ Build: `ninja -C build-meson iso-gui` produces `CactBridge-x86/build/cact-gui.is
 
 1. **GRUB** (Multiboot2) loads `kernel.bin` + `cctkfs.img` module
 2. **CactKernel** initialises: PMM/VMM → slab → I/O APIC + IDT → PCI → xHCI → page cache → VFS → network → scheduler
-3. Kernel launches **`/bin/init`** — this is **cgoct** (or **cgoct-gui** for GUI builds)
+3. Kernel launches **`/usr/bin/init`** — this is **cgoct** (or **cgoct-gui** for GUI builds)
 4. **cgoct** spawns **cactsole** (interactive shell)
-5. User has **46 tools** via **CactUserBins** on `PATH=/bin:/sbin`
+5. User has **46 tools** via **CactUserBins** on `PATH=/usr/bin:/usr/sbin`
 
 **Console banner:**
 
