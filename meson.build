@@ -39,8 +39,20 @@ cgoct = siblings / 'Cgoct-x86_32'
 userbins = siblings / 'CactUserBins-x86_32'
 repo = siblings / 'LocalRepoCactOS-x86_32'
 
-# Module repos whose .cctk blobs belong in the image.
-_driver_names = ['AHCI', 'NVMe', 'Virtio-net', 'Yukon', 'Intel-HDA', 'EXT4', 'FAT32', 'RT2800USB', 'Intel-GPU']
+# Module repos whose .cctk blobs belong in the image.  The canonical list is
+# CactBridge's drivers.list (one repo name per line, "#" comments) so the ISO
+# builder and this integrator cannot drift; see PLAN-2.0.0 P3.1.
+_driver_list = bridge / 'drivers.list'
+if not fs.exists(_driver_list)
+  error('driver list not found: ' + _driver_list + ' (set -Dbridge=... to the CactBridge dir)')
+endif
+_driver_names = []
+foreach _line : fs.read(_driver_list).split('\n')
+  _name = _line.split('#')[0].strip()
+  if _name != ''
+    _driver_names += _name
+  endif
+endforeach
 
 # ------------------------------------------------------------------------------
 # Sibling invocation: configure on first use, then run a target
