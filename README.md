@@ -84,8 +84,8 @@
 **Quick start — full ISO + QEMU:**
 
 ```sh
-./build-cact-qemu.sh           # full ISO + disk, 1 command
-RUN_QEMU=1 ./build-cact-qemu.sh  # build + run
+python3 CactBridge-x86/build.py --non-gui-iso         # full ISO, 1 command
+python3 CactBridge-x86/build.py --non-gui-iso --run   # build + run
 ```
 
 **From this directory (Meson + Ninja):**
@@ -184,8 +184,7 @@ parent/
 ├── Intel-GPU-for-Cact-x86_32 ← Intel i915 graphics module
 ├── EXT4-for-Cact-x86_32    ← ext4 filesystem module
 ├── FAT32-for-Cact-x86_32   ← FAT32 filesystem module
-├── RT2800USB-for-Cact-x86_32 ← Ralink RT2800 USB Wi-Fi module
-└── build-cact-qemu.sh      ← convenience one-shot script
+└── RT2800USB-for-Cact-x86_32 ← Ralink RT2800 USB Wi-Fi module
 ```
 
 ---
